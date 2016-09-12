@@ -51,6 +51,7 @@ import com.cloudera.oryx.common.math.Solver;
 public final class ALSSpeedModelManager extends AbstractSpeedModelManager<String,String,String> {
 
   private static final Logger log = LoggerFactory.getLogger(ALSSpeedModelManager.class);
+  private static final double EPSILON = 1E-8;
 
   private ALSSpeedModel model;
   private final boolean noKnownItems;
@@ -167,7 +168,7 @@ public final class ALSSpeedModelManager extends AbstractSpeedModelManager<String
         .map(tuple -> {
           Tuple2<String,String> userItem = tuple._1();
           Double strength = tuple._2();
-          return new UserItemStrength(userItem._1(), userItem._2(), strength.floatValue());
+          return new UserItemStrength(userItem._1(), userItem._2(), (float) Math.log(1+strength.floatValue()/EPSILON));
         }).collect();
 
     Solver XTXsolver;
