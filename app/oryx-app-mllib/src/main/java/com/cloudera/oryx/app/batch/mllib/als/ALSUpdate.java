@@ -68,6 +68,7 @@ public final class ALSUpdate extends MLUpdate<String> {
   private static final HashFunction HASH = Hashing.md5();
   private static final Pattern MOST_INTS_PATTERN = Pattern.compile("(0|-?[1-9][0-9]{0,9})");
 
+  private static final double EPSILON = 1E-8;
   private final int iterations;
   private final boolean implicit;
   private final List<HyperParamValues<?>> hyperParamValues;
@@ -344,7 +345,7 @@ public final class ALSUpdate extends MLUpdate<String> {
         .filter(kv -> !Double.isNaN(kv._2()))
         .map(userProductScore -> {
           Tuple2<Integer,Integer> userProduct = userProductScore._1();
-          return new Rating(userProduct._1(), userProduct._2(), userProductScore._2());
+          return new Rating(userProduct._1(), userProduct._2(), Math.log(1 + userProductScore._2() / EPSILON));
         });
       }
 
